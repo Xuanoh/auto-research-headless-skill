@@ -67,7 +67,7 @@ def main() -> None:
 
 ## Objective
 
-Turn the insight into a sustained experimental research loop. Generate hypotheses, run bounded experiments, parse metrics, record findings, and pivot structurally when progress stalls.
+Turn the insight into a sustained experimental research loop. Generate hypotheses, predict experiment outcomes, run bounded experiments, compare predictions with metrics, record findings, and pivot structurally when progress stalls.
 
 ## Workspace
 
@@ -86,6 +86,8 @@ Turn the insight into a sustained experimental research loop. Generate hypothese
 
 - Persist progress to task state files.
 - Prefer small, verifiable experiments.
+- Before each experiment, record an explicit prediction and confidence.
+- After parsing metrics, compare actual results with the prediction and record any reasoning gap.
 - Record negative results.
 - Avoid repeating directions already listed in `directions_tried.json`.
 - If `stale_count >= 2`, pivot across a structural axis: {", ".join(AXES)}.
@@ -114,8 +116,9 @@ Start with the smallest experiment that can validate or falsify one hypothesis d
         },
     )
     write_json(state / "directions_tried.json", {"directions": []})
+    write_json(state / "reasoning_patterns.json", {"useful_patterns": [], "failure_patterns": [], "uncertain_patterns": []})
     write_json(state / "heartbeat.json", {"task_id": task_id, "last_seen": utc_now(), "source": "init_from_insight"})
-    for file_name in ["findings.jsonl", "iteration_log.jsonl"]:
+    for file_name in ["findings.jsonl", "iteration_log.jsonl", "predictions.jsonl", "reflections.jsonl"]:
         (state / file_name).touch()
     for file_name in ["work.jsonl", "orchestrator.jsonl", "heartbeat.jsonl"]:
         (logs / file_name).touch()
@@ -125,4 +128,3 @@ Start with the smallest experiment that can validate or falsify one hypothesis d
 
 if __name__ == "__main__":
     main()
-

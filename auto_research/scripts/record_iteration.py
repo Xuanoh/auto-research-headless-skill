@@ -25,6 +25,8 @@ def main() -> None:
     parser.add_argument("--metric-value", type=float)
     parser.add_argument("--metric-mode", choices=["min", "max"], default="min")
     parser.add_argument("--run-id")
+    parser.add_argument("--prediction-id")
+    parser.add_argument("--prediction-match", choices=["yes", "no", "unknown"])
     args = parser.parse_args()
 
     task_dir = require_task_dir(args.task_dir)
@@ -76,6 +78,8 @@ def main() -> None:
             "summary": args.summary,
             "new_findings": args.new_findings,
             "metric": progress.get("primary_metric"),
+            "prediction_id": args.prediction_id,
+            "prediction_match": args.prediction_match,
             "stale_count": progress["stale_count"],
         },
     )
@@ -84,4 +88,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

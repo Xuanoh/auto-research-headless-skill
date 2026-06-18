@@ -78,3 +78,14 @@ def directions_path(task_dir: Path) -> Path:
 def iteration_log_path(task_dir: Path) -> Path:
     return task_dir / "state" / "iteration_log.jsonl"
 
+
+def predictions_path(task_dir: Path) -> Path:
+    return task_dir / "state" / "predictions.jsonl"
+
+
+def reflections_path(task_dir: Path) -> Path:
+    return task_dir / "state" / "reflections.jsonl"
+
+
+def reasoning_patterns_path(task_dir: Path) -> Path:
+    return task_dir / "state" / "reasoning_patterns.json"

@@ -38,9 +38,12 @@ Planned direction: {json.dumps(plan, ensure_ascii=False)}
 Use the local AutoResearch protocol:
 - update heartbeat at start and finish
 - read state/task_spec.md, progress.json, findings.jsonl, directions_tried.json, hypotheses.json, state_pack.md
+- before running any experiment, record a prediction with auto_research/scripts/record_prediction.py
 - run the smallest informative experiment
 - store command runs under runs/ when possible using auto_research/scripts/run_experiment.py
 - parse metrics with auto_research/scripts/parse_metrics.py when possible
+- compare parsed metrics with the prediction using auto_research/scripts/compare_prediction.py
+- if prediction and result disagree, record the reasoning gap and a reusable lesson
 - append evidence-backed findings with auto_research/scripts/append_finding.py
 - record the iteration with auto_research/scripts/record_iteration.py
 - rebuild state/state_pack.md before stopping
@@ -121,4 +124,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

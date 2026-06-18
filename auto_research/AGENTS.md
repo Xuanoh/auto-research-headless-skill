@@ -7,6 +7,9 @@ When working under `auto_research/`, follow this headless AutoResearch protocol.
 - Persist progress to task files. Do not rely on chat history.
 - Run one bounded iteration at a time.
 - Start from `state/state_pack.md` when it exists; otherwise build it with `scripts/build_state_pack.py`.
+- Before running an experiment, write a prediction to `state/predictions.jsonl` with `scripts/record_prediction.py`.
+- After parsing metrics, compare actual results with the prediction using `scripts/compare_prediction.py`.
+- If prediction and result disagree, record a reasoning gap and reusable lesson.
 - Write findings to `state/findings.jsonl`.
 - Write iteration outcomes to `state/iteration_log.jsonl` through `scripts/record_iteration.py`.
 - Update heartbeat before and after long work with `scripts/heartbeat.py`.
@@ -39,13 +42,15 @@ Use `--dry-run` for setup validation only.
 1. Read `state/task_spec.md`, `state/progress.json`, `state/directions_tried.json`, and `state/state_pack.md`.
 2. Read `state/hypotheses.json` and `state/next_iteration.json` when present.
 3. Pick a direction that differs from prior directions.
-4. Make the smallest useful code/config change or run the smallest informative experiment.
-5. Capture command output under `runs/<run_id>/`.
-6. Parse metrics with `scripts/parse_metrics.py` when possible.
-7. Append evidence-backed findings.
-8. Record the iteration.
-9. Build the next state pack.
-10. If `stale_count >= 2`, pivot structurally.
+4. Record a prediction before running the experiment.
+5. Make the smallest useful code/config change or run the smallest informative experiment.
+6. Capture command output under `runs/<run_id>/`.
+7. Parse metrics with `scripts/parse_metrics.py` when possible.
+8. Compare actual metrics with the prediction and record any reasoning gap.
+9. Append evidence-backed findings.
+10. Record the iteration.
+11. Build the next state pack.
+12. If `stale_count >= 2`, pivot structurally.
 
 ## File Discipline
 

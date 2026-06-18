@@ -7,10 +7,12 @@ This project adapts the Deli_AutoResearch protocol into a local file protocol pl
 ## Core Idea
 
 ```text
-direction -> hypothesis -> experiment -> metrics -> findings -> decision -> next iteration
+direction -> hypothesis -> prediction -> experiment -> metrics -> prediction reflection -> findings -> decision -> next iteration
 ```
 
 Each task stores its state under `auto_research/tasks/<task_id>/`. Codex or another agent reads the curated state pack, performs one bounded iteration, writes back findings and logs, then the state machine decides whether to continue, pivot, or ask for human attention.
+
+The loop is prediction-calibrated: every experiment records an expected outcome before the benchmark runs, then compares actual metrics with that prediction. Mismatches become reasoning reflections and reusable lessons for later iterations.
 
 ## Quick Start
 
@@ -71,6 +73,33 @@ Parse metrics from a run:
 python3 auto_research/scripts/parse_metrics.py auto_research/tasks/basic_ts_etth1_norm/runs/<run_id>
 ```
 
+Record a prediction before an experiment:
+
+```bash
+python3 auto_research/scripts/record_prediction.py \
+  auto_research/tasks/basic_ts_etth1_norm \
+  --direction-id dir_001 \
+  --hypothesis "Normalization should reduce validation MAE." \
+  --prediction "val/mae should improve relative to the current baseline." \
+  --metric-name val/mae \
+  --expected-direction improve \
+  --confidence 0.6 \
+  --rationale "The transform reduces scale variance across channels."
+```
+
+Compare the prediction with actual metrics:
+
+```bash
+python3 auto_research/scripts/compare_prediction.py \
+  auto_research/tasks/basic_ts_etth1_norm \
+  --prediction-id pred_0001 \
+  --metric-name val/mae \
+  --actual-value 0.42 \
+  --baseline-value 0.45 \
+  --metric-mode min \
+  --lesson "Scale-normalization hypotheses should check leakage and horizon-specific effects separately."
+```
+
 Record an iteration:
 
 ```bash
@@ -94,6 +123,9 @@ python3 auto_research/scripts/stale_detector.py auto_research/tasks/basic_ts_ett
 state/task_spec.md
 state/progress.json
 state/findings.jsonl
+state/predictions.jsonl
+state/reflections.jsonl
+state/reasoning_patterns.json
 state/directions_tried.json
 state/iteration_log.jsonl
 state/heartbeat.json

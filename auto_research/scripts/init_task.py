@@ -58,8 +58,9 @@ def main() -> None:
         },
     )
     write_json(state / "directions_tried.json", {"directions": []})
+    write_json(state / "reasoning_patterns.json", {"useful_patterns": [], "failure_patterns": [], "uncertain_patterns": []})
     write_json(state / "heartbeat.json", {"task_id": args.task_id, "last_seen": utc_now(), "source": "init"})
-    for file_name in ["findings.jsonl", "iteration_log.jsonl"]:
+    for file_name in ["findings.jsonl", "iteration_log.jsonl", "predictions.jsonl", "reflections.jsonl"]:
         (state / file_name).touch()
     for file_name in ["work.jsonl", "orchestrator.jsonl", "heartbeat.jsonl"]:
         (logs / file_name).touch()
@@ -69,4 +70,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

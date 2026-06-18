@@ -1,6 +1,6 @@
 ---
 name: auto-research-headless
-description: Turn a user's research insight into a headless continuous experiment loop. Use when the user gives a broad experimental insight or research direction and wants Codex to initialize task state, generate hypotheses, run bounded experiment iterations, record findings, detect stalls, pivot structurally, and continue with minimal human intervention.
+description: Turn a user's research insight into a headless continuous experiment loop. Use when the user gives a broad experimental insight or research direction and wants Codex to initialize task state, generate hypotheses, predict experiment outcomes before running, compare predictions with benchmark metrics, record findings and reasoning reflections, detect stalls, pivot structurally, and continue with minimal human intervention.
 ---
 
 # Auto Research Headless
@@ -18,7 +18,7 @@ Do not use chat history as the source of truth. The task directory is the source
 The intended interaction is:
 
 ```text
-User gives insight -> initialize task -> generate hypotheses -> run experiment loop -> record findings -> continue or pivot.
+User gives insight -> initialize task -> generate hypotheses -> predict outcome -> run experiment loop -> compare metrics -> record findings/reflections -> continue or pivot.
 ```
 
 Prefer this path over asking the user to choose subcommands manually.
@@ -56,6 +56,9 @@ auto_research/tasks/<task_id>/
     task_spec.md
     progress.json
     findings.jsonl
+    predictions.jsonl
+    reflections.jsonl
+    reasoning_patterns.json
     directions_tried.json
     iteration_log.jsonl
     heartbeat.json
@@ -80,13 +83,27 @@ auto_research/tasks/<task_id>/
 1. Run `auto_research/scripts/heartbeat.py <task_dir> --source worker --event start`.
 2. Read `state/state_pack.md`, `state/hypotheses.json` when present, and `state/next_iteration.json` when present.
 3. Choose one direction that is different from prior directions.
-4. Run the smallest informative experiment or make the smallest necessary code/config change.
-5. Store every command run under `runs/` using `auto_research/scripts/run_experiment.py` when possible.
-6. Parse metrics with `auto_research/scripts/parse_metrics.py`.
-7. Append findings with `auto_research/scripts/append_finding.py`.
-8. Record the iteration with `auto_research/scripts/record_iteration.py`.
-9. Rebuild `state/state_pack.md`.
-10. Run `auto_research/scripts/heartbeat.py <task_dir> --source worker --event finish`.
+4. Before running the experiment, record a concrete prediction with `auto_research/scripts/record_prediction.py`.
+5. Run the smallest informative experiment or make the smallest necessary code/config change.
+6. Store every command run under `runs/` using `auto_research/scripts/run_experiment.py` when possible.
+7. Parse metrics with `auto_research/scripts/parse_metrics.py`.
+8. Compare actual metrics with the prediction using `auto_research/scripts/compare_prediction.py`.
+9. If prediction and result disagree, write the reasoning gap and a reusable lesson; treat this as learning, not failure by itself.
+10. Append findings with `auto_research/scripts/append_finding.py`.
+11. Record the iteration with `auto_research/scripts/record_iteration.py`.
+12. Rebuild `state/state_pack.md`.
+13. Run `auto_research/scripts/heartbeat.py <task_dir> --source worker --event finish`.
+
+## Prediction Calibration
+
+Every iteration must include a pre-experiment prediction before benchmark execution. The prediction should state:
+
+- expected metric direction or value
+- confidence
+- rationale
+- plausible failure modes
+
+After metric parsing, compare prediction and result. Store mismatches in `state/reflections.jsonl` and reusable reasoning lessons in `state/reasoning_patterns.json`. Future iterations must read these patterns from `state/state_pack.md` and avoid repeating known reasoning errors.
 
 ## Stale Handling
 
@@ -138,6 +155,7 @@ At the end of a turn, report:
 - iteration number
 - run ids
 - metrics
+- prediction match or mismatch
 - new findings
 - stale status
 - next action
