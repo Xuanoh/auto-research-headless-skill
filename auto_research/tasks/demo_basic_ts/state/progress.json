@@ -1,0 +1,16 @@
+{
+  "task_id": "demo_basic_ts",
+  "iteration": 0,
+  "status": "idle",
+  "stale_count": 0,
+  "total_findings": 0,
+  "primary_metric": {
+    "name": null,
+    "mode": "min",
+    "best": null,
+    "latest": null
+  },
+  "active_direction_id": null,
+  "last_progress_at": null,
+  "needs_human_attention": false
+}

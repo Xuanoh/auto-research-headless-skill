@@ -1,0 +1,6 @@
+tasks/*/runs/
+tasks/*/reports/*.tmp
+tasks/*/state/state_pack.md
+__pycache__/
+*.pyc
+
