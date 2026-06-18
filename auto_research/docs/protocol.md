@@ -28,6 +28,23 @@ failure and loop branches:
   stale_count >= 4 -> needs_human_attention
 ```
 
+## Insight-To-Loop Mode
+
+Insight-to-loop mode treats the user's insight as a seed, not a one-off prompt.
+
+```text
+insight
+  -> task_spec.md
+  -> hypotheses.json
+  -> next_iteration.json
+  -> fresh Codex iteration
+  -> findings.jsonl
+  -> progress.json
+  -> continue or structural pivot
+```
+
+The loop driver is `scripts/orchestrator_loop.py`. It does not replace Codex's research judgment; it supplies the durable state machine and fresh-session scheduling.
+
 ## Stale Rules
 
 An iteration is stale when:
@@ -52,4 +69,3 @@ Effects:
 - evaluation: benchmark subset, aggregation, statistical confidence
 - environment: dependency, GPU memory, cache, version mismatch
 - code: runner/config refactor, nondeterminism, instrumentation
-

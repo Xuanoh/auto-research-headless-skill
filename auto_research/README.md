@@ -14,6 +14,30 @@ Each task stores its state under `auto_research/tasks/<task_id>/`. Codex or anot
 
 ## Quick Start
 
+Start from an insight:
+
+```bash
+python3 auto_research/scripts/init_from_insight.py \
+  --insight "A concrete experimental hunch or research direction." \
+  --workspace "$(pwd)" \
+  --budget-rounds 10 \
+  --budget-hours 4
+```
+
+Run a dry loop that writes the next iteration prompt without invoking Codex:
+
+```bash
+python3 auto_research/scripts/orchestrator_loop.py auto_research/tasks/<task_id> --rounds 1 --dry-run
+```
+
+Run a live loop that invokes fresh Codex sessions:
+
+```bash
+python3 auto_research/scripts/orchestrator_loop.py auto_research/tasks/<task_id> --rounds 3
+```
+
+Manual task creation is still available when you already know the objective and success criteria.
+
 Create a new task:
 
 ```bash

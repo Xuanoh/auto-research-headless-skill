@@ -14,21 +14,41 @@ When working under `auto_research/`, follow this headless AutoResearch protocol.
 - Prefer structural pivots after repeated stalls.
 - Do not ask the user during an active run unless the task is blocked by an external dependency or unsafe action.
 
+## Insight-To-Loop Default
+
+When the user provides an experimental insight, initialize a task with:
+
+```bash
+python3 auto_research/scripts/init_from_insight.py \
+  --insight "<insight>" \
+  --workspace "$(pwd)" \
+  --budget-rounds 10 \
+  --budget-hours 4
+```
+
+Then run or prepare the loop with:
+
+```bash
+python3 auto_research/scripts/orchestrator_loop.py auto_research/tasks/<task_id> --rounds 3
+```
+
+Use `--dry-run` for setup validation only.
+
 ## Iteration Loop
 
 1. Read `state/task_spec.md`, `state/progress.json`, `state/directions_tried.json`, and `state/state_pack.md`.
-2. Pick a direction that differs from prior directions.
-3. Make the smallest useful code/config change or run the smallest informative experiment.
-4. Capture command output under `runs/<run_id>/`.
-5. Parse metrics with `scripts/parse_metrics.py` when possible.
-6. Append evidence-backed findings.
-7. Record the iteration.
-8. Build the next state pack.
-9. If `stale_count >= 2`, pivot structurally.
+2. Read `state/hypotheses.json` and `state/next_iteration.json` when present.
+3. Pick a direction that differs from prior directions.
+4. Make the smallest useful code/config change or run the smallest informative experiment.
+5. Capture command output under `runs/<run_id>/`.
+6. Parse metrics with `scripts/parse_metrics.py` when possible.
+7. Append evidence-backed findings.
+8. Record the iteration.
+9. Build the next state pack.
+10. If `stale_count >= 2`, pivot structurally.
 
 ## File Discipline
 
 - Keep generated artifacts under the active task directory.
 - Keep scripts standard-library only unless the task explicitly adds dependencies.
 - Do not edit unrelated project files when updating the AutoResearch protocol.
-

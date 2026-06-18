@@ -6,6 +6,8 @@ Checks performed:
 
 ```bash
 python3 -m py_compile auto_research/scripts/*.py
+python3 auto_research/scripts/init_from_insight.py --root /tmp/ar_tasks --task-id insight_smoke --insight "Normalization may affect long-horizon forecasting robustness." --workspace /tmp --budget-rounds 2 --budget-hours 1
+python3 auto_research/scripts/orchestrator_loop.py /tmp/ar_tasks/insight_smoke --rounds 1 --dry-run
 python3 auto_research/scripts/build_state_pack.py auto_research/tasks/demo_basic_ts
 python3 auto_research/scripts/run_experiment.py auto_research/tasks/demo_basic_ts --name metric_smoke --cwd /path/to/workspace -- python3 -c 'print("{\"metric\":\"val/mae\",\"value\":0.42}")'
 python3 auto_research/scripts/parse_metrics.py auto_research/tasks/demo_basic_ts/runs/<run_id>
